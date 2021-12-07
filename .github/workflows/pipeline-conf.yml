@@ -1,0 +1,60 @@
+name: Get Pipeline configuration from cloudopsworks-ci.yml
+
+on:
+  workflow_call:
+    outputs:
+      pipelineDocker:
+        value: ${{ jobs.get-pipeline-conf.outputs.pipeline_docker }}
+      pipelineHelm:
+        value: ${{ jobs.get-pipeline-conf.outputs.pipeline_helm }}
+      pipelineZip:
+        value: ${{ jobs.get-pipeline-conf.outputs.pipeline_zip }}
+      zipGlobs:
+        value: ${{ jobs.get-pipeline-conf.outputs.zip_globs }}
+      excludeGlobs:
+        value: ${{ jobs.get-pipeline-conf.outputs.exclude_globs }}
+
+jobs:
+  get-pipeline-conf:
+    runs-on: ubuntu-latest
+    outputs:
+      pipeline_docker: ${{ steps.pipeline_docker.outputs.result }}
+      pipeline_helm: ${{ steps.pipeline_helm.outputs.result }}
+      pipeline_zip: ${{ steps.pipeline_zip.outputs.result }}
+      zip_globs: ${{ steps.zip_globs.outputs.result }}
+      exclude_globs: ${{ steps.exclude_globs.outputs.result }}
+    steps:
+      # Get pipeline conf
+      - name: Get pipeline docker enable
+        id: pipeline_docker
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.pipeline[]' ./cloudopsworks-ci.yaml | grep docker | wc -l
+
+      # Get pipeline conf
+      - name: Get pipeline helm enable
+        id: pipeline_helm
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.pipeline[]' ./cloudopsworks-ci.yaml | grep helm | wc -l
+
+      # Get pipeline conf
+      - name: Get pipeline zip packaging
+        id: pipeline_zip
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.pipeline[]' ./cloudopsworks-ci.yaml | grep zip | wc -l
+
+      # Get pipeline conf
+      - name: Get pipeline zip packaging globs
+        id: zip_globs
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.zipGlobs[]' ./cloudopsworks-ci.yaml
+
+      # Get pipeline conf
+      - name: Get pipeline zip packaging exclude globs
+        id: exclude_globs
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.excludeGlobs[]' ./cloudopsworks-ci.yaml
