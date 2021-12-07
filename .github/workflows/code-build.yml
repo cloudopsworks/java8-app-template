@@ -130,7 +130,7 @@ jobs:
           echo -n "$NEXT_VERSION" > VERSION
       # Create a version in case this is not a Release:
       - name: Set snapshot Version
-        if: !inputs.isRelease
+        if: inputs.isRelease == false
         env:
           NEXT_VERSION: "${{ steps.semvers.}}"
         run: |
