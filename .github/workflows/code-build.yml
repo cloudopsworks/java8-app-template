@@ -6,28 +6,25 @@ name: Code Build Workflow Template
 on:
   workflow_call:
     inputs:
-      DOCKER_REGISTRY_ADDRESS:
-        required: true
-        type: string
-      HELM_REGISTRY_ADDRESS:
-        required: true
-        type: string
-      BOT_USER:
-        required: true
-        type: string
-      BOT_EMAIL:
-        required: true
-        type: string
       isRelease:
         default: true
         required: false
         type: boolean
-
       
     outputs:
       release_version:
         value: ${{ jobs.build.outputs.release_version }}
     secrets:
+      DOCKER_REGISTRY_ADDRESS:
+        required: true
+      HELM_REGISTRY_ADDRESS:
+        required: true
+      BOT_USER:
+        required: true
+      BOT_EMAIL:
+        required: true
+      BOT_TOKEN:
+        required: true
       dockerRegistryUser:
         required: true
       dockerRegistryPassword:
@@ -35,8 +32,6 @@ on:
       helmRegistryUser:
         required: true
       helmRegistryPassword:
-        required: true
-      BOT_TOKEN:
         required: true
 
 
