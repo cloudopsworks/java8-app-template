@@ -27,8 +27,8 @@ jobs:
         with:
           token: ${{ secrets.BOT_TOKEN }}
           body-file: CHANGELOG.md
-          name: "Release v${{ input.release-tag }}"
-          tag_name: v${{ input.release-tag }}
+          name: "Release v${{ inputs.release-tag }}"
+          tag_name: v${{ inputs.release-tag }}
           files: |
             target/*.zip
             target/*.jar

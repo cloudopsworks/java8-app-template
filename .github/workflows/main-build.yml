@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   build-release:
-    uses: cloudopsworks/java8-app-template/.github/workflows/code-build.yml@main
+    uses: cloudopsworks/java8-app-template/.github/workflows/code-build.yml@master
     secrets:
       DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
       HELM_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
