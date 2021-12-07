@@ -24,7 +24,7 @@ jobs:
       release_version: ${{ steps.release.outputs.release_version }}
     steps:
       - name: Build Release
-        uses: cloudopsworks/java8-app-template/.github/workflows/code-build.yml
+        uses: cloudopsworks/java8-app-template/.github/workflows/code-build.yml@main
         with:
           DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
           HELM_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}

@@ -22,7 +22,7 @@ on:
         default: true
         required: false
         type: boolean
-        
+
       
     outputs:
       release_version:
@@ -72,7 +72,7 @@ jobs:
       # Get Pipeline configuration
       - name: Get Pipeline Config
         id: pipelineConfig
-        uses: cloudopsworks/java8-app-template/.github/workflows/pipeline-conf.yml
+        uses: cloudopsworks/java8-app-template/.github/workflows/pipeline-conf.yml@master
 
       # Get the owner repo
       - name: Get owner
