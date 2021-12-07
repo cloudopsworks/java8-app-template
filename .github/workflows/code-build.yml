@@ -18,7 +18,7 @@ on:
       BOT_EMAIL:
         required: true
         type: string
-      isSnapshot:
+      isRelease:
         default: true
         required: false
         type: boolean
@@ -69,10 +69,40 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Get Pipeline configuration
-      - name: Get Pipeline Config
-        id: pipelineConfig
-        uses: cloudopsworks/java8-app-template/.github/workflows/pipeline-conf.yml@master
+      # Get pipeline conf
+      - name: Get pipeline docker enable
+        id: pipeline_docker
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.pipeline[]' ./cloudopsworks-ci.yaml | grep docker | wc -l
+
+      # Get pipeline conf
+      - name: Get pipeline helm enable
+        id: pipeline_helm
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.pipeline[]' ./cloudopsworks-ci.yaml | grep helm | wc -l
+
+      # Get pipeline conf
+      - name: Get pipeline zip packaging
+        id: pipeline_zip
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.pipeline[]' ./cloudopsworks-ci.yaml | grep zip | wc -l
+
+      # Get pipeline conf
+      - name: Get pipeline zip packaging globs
+        id: zip_globs
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.zipGlobs[]' ./cloudopsworks-ci.yaml
+
+      # Get pipeline conf
+      - name: Get pipeline zip packaging exclude globs
+        id: exclude_globs
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval '.excludeGlobs[]' ./cloudopsworks-ci.yaml
 
       # Get the owner repo
       - name: Get owner
@@ -83,10 +113,26 @@ jobs:
           echo "::set-output name=owner::$repo_owner"
           echo "::set-output name=repo_name::$repo_name"
 
-      # Next version for build and create VERSION file
-      - name: Next Version
-        id: nextVersion
-        uses: cloduopsworks/java8-app-template/.github/woorkflows/next-version.yml@master
+      # Get previous tags in order to proceed to generate next version
+      - name: Get Previous tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        id: previoustag
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      # Generate next SEMVER number
+      - name: Next Semver
+        uses: WyriHaximus/github-action-next-semvers@v1
+        id: semvers
+        with:
+          version: "${{ steps.previoustag.outputs.tag }}"
+      # Create a VERSION file to use through the build
+      - name: Set Version File
+        id: release
+        env:
+          NEXT_VERSION: "${{ steps.semvers.outputs.patch }}"
+        run: |
+          echo -n "$NEXT_VERSION" > VERSION
+          echo "::set-output name=release_version::$NEXT_VERSION"
 
       # Maven version set to POM.XML
       - name: Maven Version
@@ -96,7 +142,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots clean package
       # Proceed with helm chart versioning bump
       - name: Helm Chart Versioning
-        if: steps.pipelineConfig.outputs.pipelineHelm == 1
+        if: steps.pipeline_helm.outputs.result == 1
         env:
           HELM_REGISTRY_ADDRESS: ${{ inputs.HELM_REGISTRY_ADDRESS }}
           DOCKER_REGISTRY_ADDRESS: ${{ inputs.DOCKER_REGISTRY_ADDRESS }}
@@ -125,17 +171,17 @@ jobs:
       # Docker Build and deploy to registry
       #
       - name: Docker Login
-        if: steps.pipelineConfig.outputs.pipelineDocker == 1
+        if: steps.pipeline_docker.outputs.result == 1
         uses: docker/login-action@v1
         with:
           registry: ${{ inputs.DOCKER_REGISTRY_ADDRESS }}
           username: ${{ secrets.dockerRegistryuser }}
           password: ${{ secrets.dockerRegistryPassword }}
       - name: Set up Docker Buildx
-        if: steps.pipelineConfig.outputs.pipelineDocker == 1
+        if: steps.pipeline_docker.outputs.result == 1
         uses: docker/setup-buildx-action@v1
       - name: Docker Push
-        if: steps.pipelineConfig.outputs.pipelineDocker == 1
+        if: steps.pipeline_docker.outputs.result == 1
         uses: docker/build-push-action@v2
         with:
           push: true
@@ -147,7 +193,7 @@ jobs:
       # Helm Build and deploy to registry
       #
       - name: Helm Build
-        if: steps.pipelineConfig.outputs.pipelineHelm == 1
+        if: steps.pipeline_helm.outputs.result == 1
         env:
           HELM_REGISTRY_ADDRESS: ${{ inputs.HELM_REGISTRY_ADDRESS }}
           DOCKER_REGISTRY_ADDRESS: ${{ inputs.DOCKER_REGISTRY_ADDRESS }}
@@ -164,11 +210,11 @@ jobs:
       # Perform ZIP packaging of target files & globbed files
       #
       - name: ZIP file packaging
-        if: steps.pipelineConfig.outputs.pipelineZip == 1
+        if: steps.pipeline_zip.outputs.result == 1
         run: |
           VERSION=$(cat VERSION)
           ZIPFILE=target/${{ steps.getowner.outputs.repo_name }}-v${VERSION}.zip
           mkdir -p target/
-          echo '${{ steps.pipelineConfig.outputs.zipGlobs }}' > target/.includelist
-          echo '${{ steps.pipelineConfig.outputs.excludeGlobs }}' > target/.excludelist
+          echo '${{ steps.zip_globs.outputs.result }}' > target/.includelist
+          echo '${{ steps.exclude_globs.outputs.result }}' > target/.excludelist
           zip -u -r ${ZIPFILE} . -i@target/.includelist -x@target/.excludelist
