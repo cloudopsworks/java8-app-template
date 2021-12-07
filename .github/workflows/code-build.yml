@@ -158,8 +158,6 @@ jobs:
         if: inputs.isRelease == false
         uses: heinrichreimer/github-changelog-generator-action@v2.3
         with:
-          sinceTag: ${{ steps.previoustag.outputs.tag }}
-          futureRelease: ${{ steps.semvers.outputs.patch }}
           output: CHANGELOG.md
           token: ${{ secrets.BOT_TOKEN }}
           stripGeneratorNotice: true
