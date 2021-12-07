@@ -257,8 +257,7 @@ jobs:
         with:
           name: all-artifacts
           path: |
-            !target/original*
-            target/*.zip
-            target/*.jar
+            target/${{ steps.getowner.outputs.repo_name }}*.zip
+            target/${{ steps.getowner.outputs.repo_name }}*.jar
             CHANGELOG.md
           retention-days: 1
