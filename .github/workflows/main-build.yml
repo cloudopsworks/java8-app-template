@@ -13,7 +13,9 @@ on:
     
 # Permission Settings for the entire RUN
 permissions:
+  actions: write
   contents: write
+  issues: write
   packages: write
   statuses: write
 
@@ -30,7 +32,10 @@ jobs:
       dockerRegistryPassword: ${{ secrets.AZURE_SERVICE_SECRET }}
       helmRegistryUser: ${{ secrets.AZURE_SERVICE_ID }}
       helmRegistryPassword: ${{ secrets.AZURE_SERVICE_SECRET }}
+
   create-release:
+    needs:
+      - build-release
     uses: cloudopsworks/java8-app-template/.github/workflows/create-release.yml@master
     with:
       release-tag: jobs.build-release.outputs.release_version
@@ -79,6 +84,7 @@ jobs:
     needs:
       - build-release
       - static-analysis
+      - create-release
     steps:
       # Proceed with checkout of source with all the references (depth=0)  
       - uses: actions/checkout@v2
