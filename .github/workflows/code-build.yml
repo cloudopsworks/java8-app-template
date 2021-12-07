@@ -14,6 +14,7 @@ on:
     outputs:
       release_version:
         value: ${{ jobs.build.outputs.release_version }}
+
     secrets:
       DOCKER_REGISTRY_ADDRESS:
         required: true
