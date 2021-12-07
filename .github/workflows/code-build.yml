@@ -164,7 +164,7 @@ jobs:
       - name: Create Changelog
         uses: heinrichreimer/github-changelog-generator-action@v2.3
         with:
-          sinceTag: steps.previoustag.outputs.tag
+          sinceTag: ${{ steps.previoustag.outputs.tag }}
           output: CHANGELOG.md
           token: ${{ secrets.BOT_TOKEN }}
       # Push the changes to Git TAG before deploying anything
