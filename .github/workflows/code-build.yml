@@ -132,9 +132,9 @@ jobs:
       - name: Set snapshot Version
         if: inputs.isRelease == false
         env:
-          NEXT_VERSION: "${{ steps.semvers.}}"
+          NEXT_VERSION: "${{ steps.semvers.outputs.patch }}-SNAPSHOT"
         run: |
-          echo -n "${NEXT_VERSION}-SNAPSHOT" > VERSION
+          echo -n "${NEXT_VERSION}" > VERSION
       # Collect the version in VERSION File and publish
       - name: Set Release verision output
         id: release
