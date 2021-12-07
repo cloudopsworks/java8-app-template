@@ -139,8 +139,8 @@ jobs:
       - name: Helm Chart Versioning
         if: steps.pipeline_helm.outputs.result == 1
         env:
-          HELM_REGISTRY_ADDRESS: ${{ inputs.HELM_REGISTRY_ADDRESS }}
-          DOCKER_REGISTRY_ADDRESS: ${{ inputs.DOCKER_REGISTRY_ADDRESS }}
+          HELM_REGISTRY_ADDRESS: ${{ secrets.HELM_REGISTRY_ADDRESS }}
+          DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
           REPOSITORY_OWNER: ${{ steps.getowner.outputs.owner }}
           REPOSITORY_NAME: ${{ steps.getowner.outputs.repo_name }}
         run: |
@@ -152,8 +152,8 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           VERSION=$(cat VERSION)
-          git config --global user.name "${{ input.BOT_USER }}"
-          git config --global user.email "${{ input.BOT_EMAIL }}"
+          git config --global user.name "${{ secrets.BOT_USER }}"
+          git config --global user.email "${{ secrets.BOT_EMAIL }}"
           git commit -a -m "chore: release version v$VERSION"
           git tag -fa v$VERSION -m "Release Version v$VERSION"
           git push origin v$VERSION
@@ -169,7 +169,7 @@ jobs:
         if: steps.pipeline_docker.outputs.result == 1
         uses: docker/login-action@v1
         with:
-          registry: ${{ inputs.DOCKER_REGISTRY_ADDRESS }}
+          registry: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
           username: ${{ secrets.dockerRegistryuser }}
           password: ${{ secrets.dockerRegistryPassword }}
       - name: Set up Docker Buildx
@@ -182,16 +182,16 @@ jobs:
           push: true
           context: .
           tags: |
-            ${{ input.DOCKER_REGISTRY_ADDRESS }}/${{ steps.getowner.outputs.owner }}/${{ steps.getowner.outputs.repo_name }}:latest
-            ${{ input.DOCKER_REGISTRY_ADDRESS }}/${{ steps.getowner.outputs.owner }}/${{ steps.getowner.outputs.repo_name }}:${{ steps.release.outputs.release_version }}
+            ${{ secrets.DOCKER_REGISTRY_ADDRESS }}/${{ steps.getowner.outputs.owner }}/${{ steps.getowner.outputs.repo_name }}:latest
+            ${{ secrets.DOCKER_REGISTRY_ADDRESS }}/${{ steps.getowner.outputs.owner }}/${{ steps.getowner.outputs.repo_name }}:${{ steps.release.outputs.release_version }}
       #
       # Helm Build and deploy to registry
       #
       - name: Helm Build
         if: steps.pipeline_helm.outputs.result == 1
         env:
-          HELM_REGISTRY_ADDRESS: ${{ inputs.HELM_REGISTRY_ADDRESS }}
-          DOCKER_REGISTRY_ADDRESS: ${{ inputs.DOCKER_REGISTRY_ADDRESS }}
+          HELM_REGISTRY_ADDRESS: ${{ secrets.HELM_REGISTRY_ADDRESS }}
+          DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
           HELM_CREDS_USER: ${{ secrets.helmRegistryUser }}
           HELM_CREDS_PASSWORD: ${{ secrets.helmRegistryPassword }}
           HELM_EXPERIMENTAL_OCI: "1"
