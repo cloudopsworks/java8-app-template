@@ -26,7 +26,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.BOT_TOKEN }}
-          body-file: CHANGELOG.md
+          body_path: CHANGELOG.md
           name: "Release v${{ inputs.release-tag }}"
           tag_name: v${{ inputs.release-tag }}
           files: |
