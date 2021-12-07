@@ -38,7 +38,7 @@ jobs:
       - build-release
     uses: cloudopsworks/java8-app-template/.github/workflows/create-release.yml@master
     with:
-      release-tag: jobs.build-release.outputs.release_version
+      release-tag: ${{ needs.build-release.outputs.release_version }}
     secrets:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
 

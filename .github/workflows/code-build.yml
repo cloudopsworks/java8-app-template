@@ -257,6 +257,7 @@ jobs:
         with:
           name: all-artifacts
           path: |
+            !target/original*
             target/*.zip
             target/*.jar
             CHANGELOG.md
