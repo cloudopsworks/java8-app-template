@@ -123,14 +123,14 @@ jobs:
 
       # Create a VERSION file to use through the build
       - name: Set Version File for a Release
-        if: isRelease
+        if: inputs.isRelease
         env:
           NEXT_VERSION: "${{ steps.semvers.outputs.patch }}"
         run: |
           echo -n "$NEXT_VERSION" > VERSION
       # Create a version in case this is not a Release:
       - name: Set snapshot Version
-        if: !isRelease
+        if: !inputs.isRelease
         env:
           NEXT_VERSION: "${{ steps.semvers.}}"
         run: |
@@ -169,7 +169,7 @@ jobs:
           token: ${{ secrets.BOT_TOKEN }}
       # Push the changes to Git TAG before deploying anything
       - name: Push TAG
-        if: isRelease
+        if: inputs.isRelease
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
@@ -181,7 +181,7 @@ jobs:
           git push origin v$VERSION
       # Deploy release to Maven Repository (defaults to Github repo)
       - name: Deploy to Maven Repo
-        if: isRelease
+        if: inputs.isRelease
         run: mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -239,7 +239,7 @@ jobs:
 
       # Perform of upload artfiacts
       - name: Upload Artifacts to workflow
-        if: isRelease
+        if: inputs.isRelease
         uses: actions/upload-artifact@v2
         with:
           name: all-artifacts
