@@ -244,7 +244,7 @@ jobs:
         if: steps.pipeline_zip.outputs.result == 1
         run: |
           VERSION=$(cat VERSION)
-          ZIPFILE=target/${{ steps.getowner.outputs.repo_name }}-v${VERSION}.zip
+          ZIPFILE=target/${{ steps.getowner.outputs.repo_name }}-${VERSION}.zip
           mkdir -p target/
           echo '${{ steps.zip_globs.outputs.result }}' > target/.includelist
           echo '${{ steps.exclude_globs.outputs.result }}' > target/.excludelist
