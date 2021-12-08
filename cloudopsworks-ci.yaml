@@ -17,9 +17,9 @@ excludeGlobs:
   - OWNER*
   - README.md
   - jenkins*
-  - target/
   - charts/
   - cloudopsworks-ci
   - skafold*
+  - original-*.jar
 # cd:
 #   env: dev
