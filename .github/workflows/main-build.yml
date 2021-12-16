@@ -34,7 +34,8 @@ jobs:
       - new_version
     uses: cloudopsworks/java8-app-template/.github/workflows/code-build.yml@master
     with:
-      ref: v${{ jobs.new_version.outputs.release_version }}
+      semver: ${{ needs.new_version.outputs.release_version }} 
+      ref: ${{ needs.new_version.outputs.release_tag }}
     secrets:
       DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
       HELM_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
@@ -63,7 +64,7 @@ jobs:
       - build
     uses: cloudopsworks/java8-app-template/.github/workflows/static-analysis.yml@master
     with:
-      ref: v${{ needs.new_version.outputs.release_version }}
+      ref: ${{ needs.new_version.outputs.release_tag }}
     secrets:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
       sonarqubeUrl: ${{ secrets.SONARQUBE_URL }}
