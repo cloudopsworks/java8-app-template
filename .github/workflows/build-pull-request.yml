@@ -19,9 +19,10 @@ permissions:
 
 jobs:
   build:
-    uses: cloudopsworks/java-app-template/.github/workflows/code-build.yml@master
+    uses: cloudopsworks/java8-app-template/.github/workflows/code-build.yml@master
     with:
       isRelease: false
+      semver: 0.0.1-SNAPSHOT
       ref: ${{ github.head_ref }}
     secrets:
       DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
@@ -37,7 +38,7 @@ jobs:
   static-analysis:
     needs:
       - build
-    uses: cloudopsworks/java-app-template/.github/workflows/static-analysis.yml@master
+    uses: cloudopsworks/java8-app-template/.github/workflows/static-analysis.yml@master
     with:
       ref: ${{ github.head_ref }}
     secrets:

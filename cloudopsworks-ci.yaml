@@ -6,7 +6,7 @@ pipeline:
   - helm
 #  - zip
 zipGlobs:
-  - target/*with-dependencies.jar
+  - target/*.jar
   - conf/**
 excludeGlobs:
   - Dockerfile
