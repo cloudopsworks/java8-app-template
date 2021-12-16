@@ -30,7 +30,6 @@ jobs:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
 
   build:
-    uses: cloudopsworks/java8-app-template/.github/workflows/code-build.yml@master
     needs: 
       - new_version
     uses: cloudopsworks/java8-app-template/.github/workflows/code-build.yml@master
