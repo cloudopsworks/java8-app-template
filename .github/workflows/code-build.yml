@@ -120,7 +120,9 @@ jobs:
 
       # Build the code!
       - name: Build Code
-        run: mvn --batch-mode --update-snapshots clean package
+        run: |
+          mvn -v
+          mvn --batch-mode --update-snapshots clean package
       # Deploy release to Maven Repository (defaults to Github repo)
       - name: Deploy to Maven Repo
         if: inputs.isRelease
