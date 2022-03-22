@@ -53,4 +53,4 @@ jobs:
           SONARQUBE_TOKEN: ${{ secrets.sonarqubeToken }}
         run: |
           mvn --batch-mode test
-          mvn --batch-mode sonar:sonar -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONARQUBE_TOKEN
+          mvn --batch-mode org.sonarsource.scanner.maven:sonar-maven-plugin:3.6.1.1688:sonar -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONARQUBE_TOKEN
