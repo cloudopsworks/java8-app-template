@@ -70,7 +70,7 @@ jobs:
           java-version: "8"
           distribution: "zulu"
       # Helm Chart build & deploy Support
-      - uses: azure/setup-helm@v1
+      - uses: azure/setup-helm@v3
       # Cache all maven packages
       - name: Cache Maven packages
         uses: actions/cache@v2
